@@ -6,6 +6,8 @@
 // 3,600,001円から	6,600,000円まで	収入金額×20％+440,000円
 // 6,600,001円から	8,500,000円まで	収入金額×10％+1,100,000円
 // 8,500,001円以上	1,950,000円（上限）
+import {useCallback, useState} from 'react'
+
 export const getEarningDeduction = (earning: number) =>
 	earning <= 1_625_000
 		? 550_000
@@ -70,3 +72,28 @@ export const getElderFamilyDependantDeduction = (count: number, income: number) 
 	count * (income <= 9_000_000 ? 480_000 : income <= 9_500_000 ? 320_000 : 160_000)
 
 export const thousandRound = (value: number) => Math.trunc(value / 1000) * 1000
+
+export const useLocalStorageInt = (key: string, initialValue: any) => {
+	const [storedValue, setStoredValue] = useState(() => {
+		try {
+			const item = window.localStorage.getItem(key)
+			return item !== undefined ? safeParseInt(item, initialValue) : initialValue
+		} catch (error) {
+			console.error(error)
+			return initialValue
+		}
+	})
+
+	const setValue = useCallback(
+		(value: any) => {
+			try {
+				setStoredValue(value)
+				window.localStorage.setItem(key, JSON.stringify(value))
+			} catch (error) {
+				console.log(error)
+			}
+		},
+		[key],
+	)
+	return [storedValue, setValue]
+}

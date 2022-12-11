@@ -1,4 +1,3 @@
-import {useState} from 'react'
 import {
 	getBasicIncomeDeduction,
 	getBasicTaxDeduction,
@@ -8,6 +7,7 @@ import {
 	getTaxRate,
 	safeParseInt,
 	thousandRound,
+	useLocalStorageInt,
 } from '~/src/lib'
 import Currency from '~/src/Currency'
 import earningDeductionTable from './assets/earning-deduction.png'
@@ -20,8 +20,8 @@ import otherTaxDeductionTable from './assets/other-tax-deduction.png'
 
 export default function App() {
 	// earning
-	const [salary, setSalary] = useState<number>(3_000_000)
-	const [sideJobEarning, setSideJobEarning] = useState<number>(1000000)
+	const [salary, setSalary] = useLocalStorageInt('salary', 3_000_000)
+	const [sideJobEarning, setSideJobEarning] = useLocalStorageInt('sideJobEarning', 0)
 
 	// income
 	const earning = salary + sideJobEarning
@@ -32,25 +32,25 @@ export default function App() {
 	// income deduction
 	const basicIncomeDeduction = getBasicIncomeDeduction(income)
 
-	const [generalFamilyDependantCount, setGeneralFamilyDependantCount] = useState(0)
+	const [generalFamilyDependantCount, setGeneralFamilyDependantCount] = useLocalStorageInt('generalFamilyDependantCount', 0)
 	const generalFamilyDependantDeduction = getGeneralFamilyDependantDeduction(
 		generalFamilyDependantCount,
 		income,
 	)
 
-	const [elderFamilyDependantCount, setElderFamilyDependantCount] = useState(0)
+	const [elderFamilyDependantCount, setElderFamilyDependantCount] = useLocalStorageInt('elderFamilyDependantCount', 0)
 	const elderFamilyDependantDeduction = getElderFamilyDependantDeduction(
 		elderFamilyDependantCount,
 		income,
 	)
 
-	const [studentDependantCount, setStudentDependantCount] = useState(0)
+	const [studentDependantCount, setStudentDependantCount] = useLocalStorageInt('studentDependantCount', 0)
 	const studentDependantDeduction = studentDependantCount * 630_000
 
-	const [generalDependantCount, setGeneralDependantCount] = useState(0)
+	const [generalDependantCount, setGeneralDependantCount] = useLocalStorageInt('generalDependantCount', 0)
 	const generalDependantDeduction = generalDependantCount * 380_000
 
-	const [otherIncomeDeduction, setOtherIncomeDeduction] = useState(0)
+	const [otherIncomeDeduction, setOtherIncomeDeduction] = useLocalStorageInt('otherIncomeDeduction', 0)
 
 	const incomeDeduction =
 		basicIncomeDeduction +
@@ -66,7 +66,7 @@ export default function App() {
 	const taxRate = getTaxRate(roundedTaxedIncome)
 
 	const basicTaxDeduction = getBasicTaxDeduction(roundedTaxedIncome)
-	const [otherTaxDeduction, setOtherTaxDeduction] = useState(0)
+	const [otherTaxDeduction, setOtherTaxDeduction] = useLocalStorageInt('otherTaxDeduction', 0)
 
 	const basicTax = Math.max(roundedTaxedIncome * taxRate - basicTaxDeduction - otherTaxDeduction, 0) // deducted tax
 
