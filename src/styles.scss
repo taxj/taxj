@@ -1,0 +1,28 @@
+input {
+	width: 150px;
+	margin-right: 8px;
+	background: transparent;
+	border: black 1px solid;
+}
+
+details {
+	background: initial;
+	font-size: 1rem;
+	border: none;
+	padding-top: 0;
+	summary {
+		font-weight: initial;
+	}
+}
+
+.mb-8 {
+	margin-bottom: 8px;
+}
+
+.mt-8 {
+	margin-top: 8px;
+}
+
+summary {
+	color: #a0aec0;
+}
