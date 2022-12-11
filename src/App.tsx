@@ -637,13 +637,6 @@ export default function App() {
 					</details>
 				</div>
 			</div>
-
-			<footer style={{textAlign: 'center'}}>
-				MIT License |{' '}
-				<a target="_blank" href="https://github.com/taxj/taxj">
-					Mã nguồn
-				</a>
-			</footer>
 		</>
 	)
 }
