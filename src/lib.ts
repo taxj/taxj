@@ -57,7 +57,7 @@ export const getBasicTaxDeduction = (deductedIncome: number) =>
 		: 4_796_000
 
 export const safeParseInt = (value: string, defaultVal = 0) => {
-	const parsed = parseInt(value)
+	const parsed = parseInt((value ?? '').replace(/[_,]/g, ''))
 	return isNaN(parsed) || !isFinite(parsed) ? defaultVal : parsed
 }
 
@@ -73,11 +73,10 @@ export const getElderFamilyDependantDeduction = (count: number, income: number) 
 
 export const thousandRound = (value: number) => Math.trunc(value / 1000) * 1000
 
-export const useLocalStorageInt = (key: string, initialValue: any) => {
+export const useLocalStorage = (key: string, initialValue: string) => {
 	const [storedValue, setStoredValue] = useState(() => {
 		try {
-			const item = window.localStorage.getItem(key)
-			return item !== undefined ? safeParseInt(item, initialValue) : initialValue
+			return window.localStorage.getItem(key) ?? initialValue
 		} catch (error) {
 			console.error(error)
 			return initialValue
@@ -85,15 +84,15 @@ export const useLocalStorageInt = (key: string, initialValue: any) => {
 	})
 
 	const setValue = useCallback(
-		(value: any) => {
+		(value = '') => {
 			try {
 				setStoredValue(value)
-				window.localStorage.setItem(key, JSON.stringify(value))
+				window.localStorage.setItem(key, value)
 			} catch (error) {
 				console.log(error)
 			}
 		},
 		[key],
 	)
-	return [storedValue, setValue]
+	return [storedValue, setValue] as const
 }

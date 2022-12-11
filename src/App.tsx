@@ -7,7 +7,7 @@ import {
 	getTaxRate,
 	safeParseInt,
 	thousandRound,
-	useLocalStorageInt,
+	useLocalStorage,
 } from '~/src/lib'
 import Currency from '~/src/Currency'
 import earningDeductionTable from './assets/earning-deduction.png'
@@ -20,8 +20,10 @@ import otherTaxDeductionTable from './assets/other-tax-deduction.png'
 
 export default function App() {
 	// earning
-	const [salary, setSalary] = useLocalStorageInt('salary', 3_000_000)
-	const [sideJobEarning, setSideJobEarning] = useLocalStorageInt('sideJobEarning', 0)
+	const [salaryStr, setSalary] = useLocalStorage('salary', '3,000,000')
+	const salary = safeParseInt(salaryStr)
+	const [sideJobEarningStr, setSideJobEarning] = useLocalStorage('sideJobEarning', '0')
+	const sideJobEarning = safeParseInt(sideJobEarningStr)
 
 	// income
 	const earning = salary + sideJobEarning
@@ -32,40 +34,46 @@ export default function App() {
 	// income deduction
 	const basicIncomeDeduction = getBasicIncomeDeduction(income)
 
-	const [generalFamilyDependantCount, setGeneralFamilyDependantCount] = useLocalStorageInt(
+	const [generalFamilyDependantCountStr, setGeneralFamilyDependantCount] = useLocalStorage(
 		'generalFamilyDependantCount',
-		0,
+		'0',
 	)
+	const generalFamilyDependantCount = safeParseInt(generalFamilyDependantCountStr)
+
 	const generalFamilyDependantDeduction = getGeneralFamilyDependantDeduction(
 		generalFamilyDependantCount,
 		income,
 	)
 
-	const [elderFamilyDependantCount, setElderFamilyDependantCount] = useLocalStorageInt(
+	const [elderFamilyDependantCountStr, setElderFamilyDependantCount] = useLocalStorage(
 		'elderFamilyDependantCount',
-		0,
+		'0',
 	)
+	const elderFamilyDependantCount = safeParseInt(elderFamilyDependantCountStr)
 	const elderFamilyDependantDeduction = getElderFamilyDependantDeduction(
 		elderFamilyDependantCount,
 		income,
 	)
 
-	const [studentDependantCount, setStudentDependantCount] = useLocalStorageInt(
+	const [studentDependantCountStr, setStudentDependantCount] = useLocalStorage(
 		'studentDependantCount',
-		0,
+		'0',
 	)
+	const studentDependantCount = safeParseInt(studentDependantCountStr)
 	const studentDependantDeduction = studentDependantCount * 630_000
 
-	const [generalDependantCount, setGeneralDependantCount] = useLocalStorageInt(
+	const [generalDependantCountStr, setGeneralDependantCount] = useLocalStorage(
 		'generalDependantCount',
-		0,
+		'0',
 	)
+	const generalDependantCount = safeParseInt(generalDependantCountStr)
 	const generalDependantDeduction = generalDependantCount * 380_000
 
-	const [otherIncomeDeduction, setOtherIncomeDeduction] = useLocalStorageInt(
+	const [otherIncomeDeductionStr, setOtherIncomeDeduction] = useLocalStorage(
 		'otherIncomeDeduction',
-		0,
+		'0',
 	)
+	const otherIncomeDeduction = safeParseInt(otherIncomeDeductionStr)
 
 	const incomeDeduction =
 		basicIncomeDeduction +
@@ -81,7 +89,8 @@ export default function App() {
 	const taxRate = getTaxRate(roundedTaxedIncome)
 
 	const basicTaxDeduction = getBasicTaxDeduction(roundedTaxedIncome)
-	const [otherTaxDeduction, setOtherTaxDeduction] = useLocalStorageInt('otherTaxDeduction', 0)
+	const [otherTaxDeductionStr, setOtherTaxDeduction] = useLocalStorage('otherTaxDeduction', '0')
+	const otherTaxDeduction = safeParseInt(otherTaxDeductionStr)
 
 	const basicTax = Math.max(roundedTaxedIncome * taxRate - basicTaxDeduction - otherTaxDeduction, 0) // deducted tax
 
@@ -101,13 +110,9 @@ export default function App() {
 					<label htmlFor="salary">Lương + Thưởng (給与)</label>
 				</div>
 				<div>
-					<input
-						name="salary"
-						onChange={evt => setSalary(safeParseInt(evt.target.value))}
-						value={salary}
-					/>
+					<input name="salary" onChange={evt => setSalary(evt.target.value)} value={salaryStr} />
 					<span>
-						<Currency amount={earning} />
+						<Currency amount={salary} />
 					</span>
 				</div>
 				<div>
@@ -131,13 +136,13 @@ export default function App() {
 
 			<div>
 				<div>
-					<label htmlFor="profit">Thu nhập làm thêm (事業総収入)</label>
+					<label htmlFor="sideJobEarning">Thu nhập làm thêm (事業総収入)</label>
 				</div>
 				<div>
 					<input
-						name="profit"
-						onChange={evt => setSideJobEarning(safeParseInt(evt.target.value))}
-						value={sideJobEarning}
+						name="sideJobEarning"
+						onChange={evt => setSideJobEarning(evt.target.value)}
+						value={sideJobEarningStr}
 					/>
 					<span>
 						<Currency amount={sideJobEarning} />
@@ -272,8 +277,8 @@ export default function App() {
 				<div>
 					<input
 						name="generalFamilyDependantCount"
-						value={generalFamilyDependantCount}
-						onChange={evt => setGeneralFamilyDependantCount(safeParseInt(evt.target.value))}
+						value={generalFamilyDependantCountStr}
+						onChange={evt => setGeneralFamilyDependantCount(evt.target.value)}
 					/>
 					<span>
 						<Currency amount={generalFamilyDependantDeduction} />
@@ -308,8 +313,8 @@ export default function App() {
 				<div>
 					<input
 						name="elderFamilyDependantCount"
-						value={elderFamilyDependantCount}
-						onChange={evt => setElderFamilyDependantCount(safeParseInt(evt.target.value))}
+						value={elderFamilyDependantCountStr}
+						onChange={evt => setElderFamilyDependantCount(evt.target.value)}
 					/>
 					<span>
 						<Currency amount={elderFamilyDependantDeduction} />
@@ -344,8 +349,8 @@ export default function App() {
 				<div>
 					<input
 						name="studentDependantCount"
-						value={studentDependantCount}
-						onChange={evt => setStudentDependantCount(safeParseInt(evt.target.value))}
+						value={studentDependantCountStr}
+						onChange={evt => setStudentDependantCount(evt.target.value)}
 					/>
 					<span>
 						<Currency amount={studentDependantDeduction} />
@@ -389,8 +394,8 @@ export default function App() {
 				<div>
 					<input
 						name="generalDependantCount"
-						value={generalDependantCount}
-						onChange={evt => setGeneralDependantCount(safeParseInt(evt.target.value))}
+						value={generalDependantCountStr}
+						onChange={evt => setGeneralDependantCount(evt.target.value)}
 					/>
 					<span>
 						<Currency amount={generalDependantDeduction} />
@@ -423,8 +428,8 @@ export default function App() {
 				<div>
 					<input
 						name="otherIncomeDeduction"
-						value={otherIncomeDeduction}
-						onChange={evt => setOtherIncomeDeduction(safeParseInt(evt.target.value))}
+						value={otherIncomeDeductionStr}
+						onChange={evt => setOtherIncomeDeduction(evt.target.value)}
 					/>
 					<span>
 						<Currency amount={otherIncomeDeduction} />
@@ -537,8 +542,8 @@ export default function App() {
 				<div>
 					<input
 						name="otherTaxDeduction"
-						value={otherTaxDeduction}
-						onChange={evt => setOtherTaxDeduction(safeParseInt(evt.target.value))}
+						value={otherTaxDeductionStr}
+						onChange={evt => setOtherTaxDeduction(evt.target.value)}
 					/>
 					<Currency amount={otherTaxDeduction} />
 				</div>
