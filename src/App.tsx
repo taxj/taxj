@@ -32,25 +32,40 @@ export default function App() {
 	// income deduction
 	const basicIncomeDeduction = getBasicIncomeDeduction(income)
 
-	const [generalFamilyDependantCount, setGeneralFamilyDependantCount] = useLocalStorageInt('generalFamilyDependantCount', 0)
+	const [generalFamilyDependantCount, setGeneralFamilyDependantCount] = useLocalStorageInt(
+		'generalFamilyDependantCount',
+		0,
+	)
 	const generalFamilyDependantDeduction = getGeneralFamilyDependantDeduction(
 		generalFamilyDependantCount,
 		income,
 	)
 
-	const [elderFamilyDependantCount, setElderFamilyDependantCount] = useLocalStorageInt('elderFamilyDependantCount', 0)
+	const [elderFamilyDependantCount, setElderFamilyDependantCount] = useLocalStorageInt(
+		'elderFamilyDependantCount',
+		0,
+	)
 	const elderFamilyDependantDeduction = getElderFamilyDependantDeduction(
 		elderFamilyDependantCount,
 		income,
 	)
 
-	const [studentDependantCount, setStudentDependantCount] = useLocalStorageInt('studentDependantCount', 0)
+	const [studentDependantCount, setStudentDependantCount] = useLocalStorageInt(
+		'studentDependantCount',
+		0,
+	)
 	const studentDependantDeduction = studentDependantCount * 630_000
 
-	const [generalDependantCount, setGeneralDependantCount] = useLocalStorageInt('generalDependantCount', 0)
+	const [generalDependantCount, setGeneralDependantCount] = useLocalStorageInt(
+		'generalDependantCount',
+		0,
+	)
 	const generalDependantDeduction = generalDependantCount * 380_000
 
-	const [otherIncomeDeduction, setOtherIncomeDeduction] = useLocalStorageInt('otherIncomeDeduction', 0)
+	const [otherIncomeDeduction, setOtherIncomeDeduction] = useLocalStorageInt(
+		'otherIncomeDeduction',
+		0,
+	)
 
 	const incomeDeduction =
 		basicIncomeDeduction +

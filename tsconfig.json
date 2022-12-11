@@ -3,19 +3,14 @@
 		"baseUrl": ".",
 		"target": "ESNext",
 		"module": "ESNext",
-		"lib": [
-			"esnext",
-			"dom"
-		],
+		"lib": ["esnext", "dom"],
 		"jsx": "react-jsx",
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
 		"downlevelIteration": true,
 		"moduleResolution": "Node",
 		"paths": {
-			"~/*": [
-				"*"
-			]
+			"~/*": ["*"]
 		}
 	}
 }

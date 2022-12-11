@@ -1,37 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">
-	<link rel="stylesheet" href="styles.scss">
-	<title>Thuế thu nhập tại Nhật</title>
-</head>
-<body>
-<div id="root"></div>
-<div id="disqus_thread"></div>
-<footer style="text-align: center;">
-	MIT License | <a target="_blank" href="https://github.com/taxj/taxj">
-	Mã nguồn
-</a>
-</footer>
-<script>
-	var disqus_config = function () {
-		this.page.url = 'https://taxj.github.io'  // Replace PAGE_URL with your page's canonical URL variable
-		this.page.identifier = 'home' // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-	};
-	(function () {
-		var d = document, s = d.createElement('script')
-		s.src = 'https://thue-thu-nhap-ca-nhan-o-nhat.disqus.com/embed.js'
-		s.setAttribute('data-timestamp', +new Date());
-		(d.head || d.body).appendChild(s)
-	})()
-</script>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css" />
+		<link rel="stylesheet" href="styles.scss" />
+		<title>Thuế thu nhập tại Nhật</title>
+	</head>
+	<body>
+		<div id="root"></div>
+		<div id="disqus_thread"></div>
+		<footer style="text-align: center">
+			MIT License | <a target="_blank" href="https://github.com/taxj/taxj"> Mã nguồn </a>
+		</footer>
+		<script>
+			var disqus_config = function () {
+				this.page.url = 'https://taxj.github.io' // Replace PAGE_URL with your page's canonical URL variable
+				this.page.identifier = 'home' // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+			}
+			;(function () {
+				var d = document,
+					s = d.createElement('script')
+				s.src = 'https://thue-thu-nhap-ca-nhan-o-nhat.disqus.com/embed.js'
+				s.setAttribute('data-timestamp', +new Date())
+				;(d.head || d.body).appendChild(s)
+			})()
+		</script>
 
-<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-<script type="module" src="main.tsx"></script>
+		<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+		<script type="module" src="main.tsx"></script>
 
-<script id="dsq-count-scr" src="//transang.disqus.com/count.js" async></script>
-</body>
+		<script id="dsq-count-scr" src="//transang.disqus.com/count.js" async></script>
+	</body>
 </html>
