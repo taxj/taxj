@@ -2,7 +2,7 @@
 	"name": "taxj",
 	"version": "0.0.1",
 	"description": "Income tax tools for Vietnamese in Japan",
-	"main": "index.js",
+	"default": "index.html",
 	"repository": "git@github.com:taxj/taxj.git",
 	"author": "Tran Sang <me@transa.ng>",
 	"license": "MIT",
@@ -14,7 +14,7 @@
 	],
 	"scripts": {
 		"start": "parcel",
-		"build": "parcel build --public-url ./ ./src/index.html --no-scope-hoist",
+		"build": "parcel build",
 		"clean": "rm -rf ./dist ./.parcel-cache",
 		"lint": "prettier --check .",
 		"lint:fix": "prettier --write ."
