@@ -17,6 +17,7 @@ import disasterTaxTable from './assets/disaster-tax.png'
 import incomeTable from './assets/income.png'
 import incomeTable2 from './assets/income2.png'
 import otherTaxDeductionTable from './assets/other-tax-deduction.png'
+import tokyoTaxTable from './assets/tokyo-tax.png'
 
 export default function App() {
 	// earning
@@ -537,7 +538,7 @@ export default function App() {
 
 			<div>
 				<div>
-					<label htmlFor="otherTaxDeduction">Khấu trừ thuế (所得税控除)</label>
+					<label htmlFor="otherTaxDeduction">Khấu trừ thuế (税額控除)</label>
 				</div>
 				<div>
 					<input
@@ -650,9 +651,28 @@ export default function App() {
 					<details>
 						<summary>Xem thêm</summary>
 						<p>
-							Đây là khoản thuế phải đóng cho nhà nước. Dựa vào số tiền mã công ty đã nộp trước
+							Đây là khoản thuế phải đóng cho cục thuế. Dựa vào số tiền mà công ty đã nộp trước
 							(源泉徴収税額や予定納税額) mà bạn sẽ cần phải đóng bổ sung (納める) nếu thiếu, hoặc
 							được cục thuế hoàn tiền (還付) nếu thừa, dựa theo số tiền chênh lệch.
+						</p>
+						<p>
+							Khoản thuế này chưa bao gồm thuế thị dân (住民税). Mỗi khu vực sống có công
+							thức tính thuế riêng. Ví dụ ở Tokyo, bạn tham khảo đường dẫn sau:
+						</p>
+						<p>
+							<a target="_blank" href="https://www.tax.metro.tokyo.lg.jp/kazei/kojin_ju.html">
+								個人住民税
+							</a>
+						</p>
+						<p>
+							<img src={tokyoTaxTable}/>
+						</p>
+						<p>
+							均等割は、定額で課税されます。
+
+							個人都民税の税額は1,500 円、個人区市町村民税の税額は3,500 円です。
+
+							※平成26年度から令和5年度までの間、地方自治体の防災対策に充てるため、個人住民税の均等割額は都民税・区市町村民税それぞれ500円が加算されています。
 						</p>
 					</details>
 				</div>
