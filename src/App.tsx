@@ -104,9 +104,7 @@ export default function App() {
 			<header>
 				<h1>Thuế thu nhập cá nhân ở Nhật</h1>
 				<p>
-					<i>
-						Cập nhật ngày 12 tháng 12 năm 2022
-					</i>
+					<i>Cập nhật ngày 12 tháng 12 năm 2022</i>
 				</p>
 			</header>
 
@@ -116,7 +114,12 @@ export default function App() {
 					<label htmlFor="salary">Lương + Thưởng (給与)</label>
 				</div>
 				<div>
-					<input name="salary" onChange={evt => setSalary(evt.target.value)} value={salaryStr} />
+					<input
+						name="salary"
+						onChange={evt => setSalary(evt.target.value)}
+						value={salaryStr}
+						id="salary"
+					/>
 					<span>
 						<Currency amount={salary} />
 					</span>
@@ -147,6 +150,7 @@ export default function App() {
 				<div>
 					<input
 						name="sideJobEarning"
+						id="sideJobEarning"
 						onChange={evt => setSideJobEarning(evt.target.value)}
 						value={sideJobEarningStr}
 					/>
@@ -283,6 +287,7 @@ export default function App() {
 				<div>
 					<input
 						name="generalFamilyDependantCount"
+						id="generalFamilyDependantCount"
 						value={generalFamilyDependantCountStr}
 						onChange={evt => setGeneralFamilyDependantCount(evt.target.value)}
 					/>
@@ -319,6 +324,7 @@ export default function App() {
 				<div>
 					<input
 						name="elderFamilyDependantCount"
+						id="elderFamilyDependantCount"
 						value={elderFamilyDependantCountStr}
 						onChange={evt => setElderFamilyDependantCount(evt.target.value)}
 					/>
@@ -355,6 +361,7 @@ export default function App() {
 				<div>
 					<input
 						name="studentDependantCount"
+						id="studentDependantCount"
 						value={studentDependantCountStr}
 						onChange={evt => setStudentDependantCount(evt.target.value)}
 					/>
@@ -400,6 +407,7 @@ export default function App() {
 				<div>
 					<input
 						name="generalDependantCount"
+						id="generalDependantCount"
 						value={generalDependantCountStr}
 						onChange={evt => setGeneralDependantCount(evt.target.value)}
 					/>
@@ -434,6 +442,7 @@ export default function App() {
 				<div>
 					<input
 						name="otherIncomeDeduction"
+						id="otherIncomeDeduction"
 						value={otherIncomeDeductionStr}
 						onChange={evt => setOtherIncomeDeduction(evt.target.value)}
 					/>
@@ -548,6 +557,7 @@ export default function App() {
 				<div>
 					<input
 						name="otherTaxDeduction"
+						id="otherTaxDeduction"
 						value={otherTaxDeductionStr}
 						onChange={evt => setOtherTaxDeduction(evt.target.value)}
 					/>
@@ -661,8 +671,8 @@ export default function App() {
 							được cục thuế hoàn tiền (還付) nếu thừa, dựa theo số tiền chênh lệch.
 						</p>
 						<p>
-							Khoản thuế này chưa bao gồm thuế thị dân (住民税). Mỗi khu vực sống có công
-							thức tính thuế riêng. Ví dụ ở Tokyo, bạn tham khảo đường dẫn sau:
+							Khoản thuế này chưa bao gồm thuế thị dân (住民税). Mỗi khu vực sống có công thức tính
+							thuế riêng. Ví dụ ở Tokyo, bạn tham khảo đường dẫn sau:
 						</p>
 						<p>
 							<a target="_blank" href="https://www.tax.metro.tokyo.lg.jp/kazei/kojin_ju.html">
@@ -670,13 +680,11 @@ export default function App() {
 							</a>
 						</p>
 						<p>
-							<img src={tokyoTaxTable}/>
+							<img src={tokyoTaxTable} />
 						</p>
 						<p>
-							均等割は、定額で課税されます。
-
-							個人都民税の税額は1,500 円、個人区市町村民税の税額は3,500 円です。
-
+							均等割は、定額で課税されます。 個人都民税の税額は1,500
+							円、個人区市町村民税の税額は3,500 円です。
 							※平成26年度から令和5年度までの間、地方自治体の防災対策に充てるため、個人住民税の均等割額は都民税・区市町村民税それぞれ500円が加算されています。
 						</p>
 					</details>
