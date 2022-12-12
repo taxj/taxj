@@ -103,6 +103,11 @@ export default function App() {
 		<>
 			<header>
 				<h1>Thuế thu nhập cá nhân ở Nhật</h1>
+				<p>
+					<i>
+						Cập nhật ngày 12 tháng 12 năm 2022
+					</i>
+				</p>
 			</header>
 
 			<h3>Thu nhập</h3>
