@@ -24,21 +24,30 @@ export const getEarningDeduction = (earning: number) =>
 // https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm
 export const getBasicIncomeDeduction = deductedEarning => 380_000
 
+const taxRateLevel = [
+	[1_949_000, 5 / 100],
+	[3_299_000, 10 / 100],
+	[6_949_000, 20 / 100],
+	[8_999_000, 23 / 100],
+	[17_999_000, 33 / 100],
+	[39_999_000, 40 / 100],
+	[Infinity, 45 / 100],
+] as const
+
 // https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm
-export const getTaxRate = (deductedIncome: number) =>
-	deductedIncome <= 1_949_000
-		? 5 / 100
-		: deductedIncome <= 3_299_000
-		? 10 / 100
-		: deductedIncome <= 6_949_000
-		? 20 / 100
-		: deductedIncome <= 8_999_000
-		? 23 / 100
-		: deductedIncome <= 17_999_000
-		? 33 / 100
-		: deductedIncome <= 39_999_000
-		? 40 / 100
-		: 45 / 100
+export const getTaxRate = (deductedIncome: number) => {
+	const [limit, rate] = taxRateLevel.find(([limit]) => deductedIncome <= limit)
+	return rate
+}
+
+export const getNearbyTaxRates = (deductedIncome: number) => {
+	const idx = taxRateLevel.findIndex(([limit]) => deductedIncome <= limit)
+	return {
+		previous: taxRateLevel[idx - 1],
+		current: taxRateLevel[idx],
+		next: taxRateLevel[idx + 1],
+	}
+}
 
 // https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm
 export const getBasicTaxDeduction = (deductedIncome: number) =>

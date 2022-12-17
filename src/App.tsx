@@ -3,7 +3,7 @@ import {
 	getBasicTaxDeduction,
 	getEarningDeduction,
 	getElderFamilyDependantDeduction,
-	getGeneralFamilyDependantDeduction,
+	getGeneralFamilyDependantDeduction, getNearbyTaxRates,
 	getTaxRate,
 	safeParseInt,
 	thousandRound,
@@ -88,6 +88,7 @@ export default function App() {
 	const taxedIncome = Math.max(income - incomeDeduction, 0)
 	const roundedTaxedIncome = thousandRound(taxedIncome)
 	const taxRate = getTaxRate(roundedTaxedIncome)
+	const {previous: previousTaxRate, current: currentTaxRate, next: nextTaxRate} = getNearbyTaxRates(roundedTaxedIncome)
 
 	const basicTaxDeduction = getBasicTaxDeduction(roundedTaxedIncome)
 	const [otherTaxDeductionStr, setOtherTaxDeduction] = useLocalStorage('otherTaxDeduction', '0')
@@ -507,7 +508,13 @@ export default function App() {
 
 			<h3 className="mt-8">Thuế thu nhập</h3>
 			<div>
-				<div>Thuế suất (税率): {taxRate * 100}%</div>
+				<div>Thuế suất (税率): <h4 className="inline"><b>{taxRate * 100}%</b></h4></div>
+				{previousTaxRate && <div className="italic">
+					Bạn cần phải giảm hoặc khấu trừ thêm ít nhất <b className="text-green-500"><Currency amount={roundedTaxedIncome - previousTaxRate[0]}/></b> yên để giảm thuế suất xuống từ {taxRate * 100}% xuống <b className="text-green-500">{previousTaxRate[1] * 100}%</b>.
+				</div>}
+				{nextTaxRate && <div className="italic">
+					Nếu bạn tăng thu nhập thêm <b className="text-red-500"><Currency amount={currentTaxRate[0] - roundedTaxedIncome + 1}/></b> yên thì thuế suất sẽ tăng lên từ {taxRate * 100}% lên <b className="text-red-500">{nextTaxRate[1] * 100}%</b>.
+				</div>}
 				<div>
 					<details>
 						<summary>Xem thêm</summary>
