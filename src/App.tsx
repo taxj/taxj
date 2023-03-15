@@ -1,7 +1,7 @@
 import {
 	getBasicIncomeDeduction,
 	getBasicTaxDeduction,
-	getEarningDeduction,
+	getSalaryDeduction,
 	getElderFamilyDependantDeduction,
 	getGeneralFamilyDependantDeduction, getNearbyTaxRates,
 	getTaxRate,
@@ -18,24 +18,30 @@ import incomeTable from './assets/income.png'
 import incomeTable2 from './assets/income2.png'
 import otherTaxDeductionTable from './assets/other-tax-deduction.png'
 import tokyoTaxTable from './assets/tokyo-tax.png'
+import digitalAccountBookLawUpdate2023 from './assets/digital-account-book-law-update-2023.png'
 
 export default function App() {
 	// earning
-	const [salaryStr, setSalary] = useLocalStorage('salary', '3,000,000')
+	const [salaryStr, setSalaryStr] = useLocalStorage('salary', '3,000,000')
 	const salary = safeParseInt(salaryStr)
-	const [sideJobEarningStr, setSideJobEarning] = useLocalStorage('sideJobEarning', '0')
-	const sideJobEarning = safeParseInt(sideJobEarningStr)
+	const salaryDeduction = getSalaryDeduction(salary)
+	const netSalary = Math.max(salary - salaryDeduction, 0)
 
-	// income
-	const earning = salary + sideJobEarning
-	const earningDeduction = getEarningDeduction(earning)
+	const [businessRevenueStr, setBusinessRevenueStr] = useLocalStorage('businessRevenue', '0')
+	const businessRevenue = safeParseInt(businessRevenueStr)
+	const [businessExpenseStr, setBusinessExpenseStr] = useLocalStorage('businessCost', '0')
+	const businessExpense = safeParseInt(businessExpenseStr)
+	const businessProfit = Math.max(businessRevenue - businessExpense, 0)
 
-	const income = Math.max(earning - earningDeduction, 0) // = deductedEarning
+	const totalEarning = salary + businessRevenue
+	const totalExpense = salaryDeduction + businessExpense
+	// net income
+	const netIncome = netSalary + businessProfit
 
 	// income deduction
-	const basicIncomeDeduction = getBasicIncomeDeduction(income)
+	const basicIncomeDeduction = getBasicIncomeDeduction(netIncome)
 
-	const [generalFamilyDependantCountStr, setGeneralFamilyDependantCount] = useLocalStorage(
+	const [generalFamilyDependantCountStr, setGeneralFamilyDependantCountStr] = useLocalStorage(
 		'generalFamilyDependantCount',
 		'0',
 	)
@@ -43,34 +49,34 @@ export default function App() {
 
 	const generalFamilyDependantDeduction = getGeneralFamilyDependantDeduction(
 		generalFamilyDependantCount,
-		income,
+		netIncome,
 	)
 
-	const [elderFamilyDependantCountStr, setElderFamilyDependantCount] = useLocalStorage(
+	const [elderFamilyDependantCountStr, setElderFamilyDependantCountStr] = useLocalStorage(
 		'elderFamilyDependantCount',
 		'0',
 	)
 	const elderFamilyDependantCount = safeParseInt(elderFamilyDependantCountStr)
 	const elderFamilyDependantDeduction = getElderFamilyDependantDeduction(
 		elderFamilyDependantCount,
-		income,
+		netIncome,
 	)
 
-	const [studentDependantCountStr, setStudentDependantCount] = useLocalStorage(
+	const [studentDependantCountStr, setStudentDependantCountStr] = useLocalStorage(
 		'studentDependantCount',
 		'0',
 	)
 	const studentDependantCount = safeParseInt(studentDependantCountStr)
 	const studentDependantDeduction = studentDependantCount * 630_000
 
-	const [generalDependantCountStr, setGeneralDependantCount] = useLocalStorage(
+	const [generalDependantCountStr, setGeneralDependantCountStr] = useLocalStorage(
 		'generalDependantCount',
 		'0',
 	)
 	const generalDependantCount = safeParseInt(generalDependantCountStr)
 	const generalDependantDeduction = generalDependantCount * 380_000
 
-	const [otherIncomeDeductionStr, setOtherIncomeDeduction] = useLocalStorage(
+	const [otherIncomeDeductionStr, setOtherIncomeDeductionStr] = useLocalStorage(
 		'otherIncomeDeduction',
 		'0',
 	)
@@ -85,13 +91,13 @@ export default function App() {
 		otherIncomeDeduction
 
 	// tax
-	const taxedIncome = Math.max(income - incomeDeduction, 0)
+	const taxedIncome = Math.max(netIncome - incomeDeduction, 0)
 	const roundedTaxedIncome = thousandRound(taxedIncome)
 	const taxRate = getTaxRate(roundedTaxedIncome)
 	const {previous: previousTaxRate, current: currentTaxRate, next: nextTaxRate} = getNearbyTaxRates(roundedTaxedIncome)
 
 	const basicTaxDeduction = getBasicTaxDeduction(roundedTaxedIncome)
-	const [otherTaxDeductionStr, setOtherTaxDeduction] = useLocalStorage('otherTaxDeduction', '0')
+	const [otherTaxDeductionStr, setOtherTaxDeductionStr] = useLocalStorage('otherTaxDeduction', '0')
 	const otherTaxDeduction = safeParseInt(otherTaxDeductionStr)
 
 	const basicTax = Math.max(roundedTaxedIncome * taxRate - basicTaxDeduction - otherTaxDeduction, 0) // deducted tax
@@ -105,11 +111,11 @@ export default function App() {
 			<header>
 				<h1>Thuế thu nhập cá nhân ở Nhật</h1>
 				<p>
-					<i>Cập nhật ngày 12 tháng 12 năm 2022</i>
+					<i>Cập nhật ngày 15 tháng 3 năm 2023</i>
 				</p>
 			</header>
 
-			<h3>Thu nhập</h3>
+			<h3>Lương và doanh thu</h3>
 			<div>
 				<div>
 					<label htmlFor="salary">Lương + Thưởng (給与)</label>
@@ -117,7 +123,7 @@ export default function App() {
 				<div>
 					<input
 						name="salary"
-						onChange={evt => setSalary(evt.target.value)}
+						onChange={evt => setSalaryStr(evt.target.value)}
 						value={salaryStr}
 						id="salary"
 					/>
@@ -130,7 +136,7 @@ export default function App() {
 						<summary>Xem thêm</summary>
 						<p>
 							Nếu công ty bạn có nộp trước thuế (源泉徴収) thì mục này nhập vào lương trước khi trừ
-							thuế nộp trước.{' '}
+							thuế nộp trước.
 						</p>
 						<p>
 							<a
@@ -146,17 +152,17 @@ export default function App() {
 
 			<div>
 				<div>
-					<label htmlFor="sideJobEarning">Thu nhập làm thêm (事業総収入)</label>
+					<label htmlFor="businessRevenue">Thu nhập làm thêm (事業総収入)</label>
 				</div>
 				<div>
 					<input
-						name="sideJobEarning"
-						id="sideJobEarning"
-						onChange={evt => setSideJobEarning(evt.target.value)}
-						value={sideJobEarningStr}
+						name="businessRevenue"
+						id="businessRevenue"
+						onChange={evt => setBusinessRevenueStr(evt.target.value)}
+						value={businessRevenueStr}
 					/>
 					<span>
-						<Currency amount={sideJobEarning} />
+						<Currency amount={businessRevenue} />
 					</span>
 				</div>
 				<div>
@@ -185,14 +191,16 @@ export default function App() {
 				<div>Tổng thu nhập (収入)</div>
 				<div>
 					<b>
-						<Currency amount={earning} />
+						<Currency amount={netIncome} />
 					</b>
 				</div>
 			</div>
 
-			<h3 className="mt-8">Khấu trừ trước thuế</h3>
-
-			<h4>Khấu trừ lần 1 (収入から差し引かれる金額)</h4>
+			<h3 className="mt-8">Chi phí (収入から差し引かれる金額)</h3>
+			<i>
+				Bạn có thể khai báo mục chi phí cho các thu nhập ngoài lương tại đây.
+				Với thu nhập từ lương chính sẽ có công thức tính cố định.
+			</i>
 			<div>
 				<details>
 					<summary>Xem thêm</summary>
@@ -208,9 +216,9 @@ export default function App() {
 			</div>
 
 			<div>
-				<div>Khấu trừ thu nhập trước thuế (給与所得控除)</div>
+				<div>Chi phí cố định theo mức lương (給与所得控除)</div>
 				<div>
-					<Currency amount={earningDeduction} />
+					<Currency amount={salaryDeduction} />
 				</div>
 				<div>
 					<details>
@@ -231,10 +239,81 @@ export default function App() {
 			</div>
 
 			<div>
-				<div>Thu nhập sau khấu trừ lần 1 (所得)</div>
+			</div>
+			<div>
+			</div>
+			<div>
 				<div>
-					<Currency amount={income} />
+					<label htmlFor="businessExpense">
+						Chi phí dành cho thu nhập ngoài lương (必要経費)
+					</label>
 				</div>
+				<input
+					name="businessExpense"
+					id="businessExpense"
+					value={businessExpenseStr}
+					onChange={evt => setBusinessExpenseStr(evt.target.value)}
+				/>
+				<span><Currency amount={businessExpense} /></span>
+				<div>
+					<details>
+						<summary>Xem thêm</summary>
+						<p>
+							Ở mục này bạn khai báo các chi phí cho công việc ngoài lương của bạn.
+							Các chi phí này được chia làm nhiều mục nhỏ (23 mục, gồm điện, nước, chiếu sáng, ăn uống, thiết bị, trả lương, đi lại, vv).
+							Bạn có nghĩa vụ phải lưu trữ các giấy tờ liên quan đến chi phí này để làm bằng chứng và giữ lại trong ít nhất 7 năm sau khi khai báo thuế.
+						</p>
+						<p>
+							Bộ luật về lưu trữ sổ kế toán điện tử sửa đổi (<a
+							target="_blank"
+							href="https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/0021005-038.pdf"
+						>
+							改正電子帳簿保存法
+						</a>, bộ luật này ra đời vào năm 1998 và được sửa đổi nhiều lần) ngày 1 tháng 1 năm 2022 có 2 sửa đổi chính liên quan đến sổ kế toán điện tử.
+						</p>
+						<p>
+							<ul>
+								<li>
+									国税関係帳簿書類の電子化要件の緩和: đơn giản hoá các thủ tục về số hoá sổ kế toán.
+									Trước kia bạn cần đăng ký với cục thuế về định dạng hoặc phần mềm làm sổ kế toán để có thể số hoá.
+									Bộ luật sửa đổi có đưa ra các điều kiện sẵn.
+									Nếu phần mềm kế toán của bạn bảo đảm các tiêu chi này thì bạn không cần đăng ký với cục thuế nữa.
+								</li>
+								<li>電子取引の電子データ保存義務化: <b>các giấy tờ liên quan tới chi phí doanh nghiệp, tức sổ kế toán và giấy tờ liên quan, từ ngày 1 tháng 1 năm 2024 phải được lưu trữ dưới dạng số</b>.</li>
+							</ul>
+						</p>
+						<p>
+							<img src={digitalAccountBookLawUpdate2023} />
+						</p>
+						<p>
+							<a
+								target="_blank"
+								href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2210.htm"
+							>
+								No.2210 やさしい必要経費の知識
+							</a>
+						</p>
+						<p>
+							<a
+								target="_blank"
+								href="https://www.keisan.nta.go.jp/r4yokuaru/aoiroshinkoku/hitsuyokeihi/index.html"
+							>
+								確定申告書等作成コーナー　必要経費
+							</a>
+						</p>
+					</details>
+				</div>
+			</div>
+
+			<div>
+				<h4 className="text-green-500">Thu nhập ròng (thu nhập sau khi trừ chi phí) (所得)</h4>
+				<h3 className="text-green-500">
+					<Currency amount={netIncome} />
+				</h3>
+				<p>
+					Đây là một trong những con số quan trọng dùng để khai báo, hoặc xét duyệt các thủ tục liên quan đến thu nhập.
+					Ví dụ như xét duyệt xem có được tính là người phụ thuộc hay không, hoặc các khấu trừ khác, vv
+				</p>
 				<div>
 					<details>
 						<summary>Xem thêm</summary>
@@ -254,7 +333,7 @@ export default function App() {
 				</div>
 			</div>
 
-			<h4>Khấu trừ lần 2 (所得控除)</h4>
+			<h3>Khấu trừ trước thuế (所得控除)</h3>
 			<div>
 				<div>Khấu trừ cơ bản (基礎控除)</div>
 				<div>
@@ -264,7 +343,7 @@ export default function App() {
 					<details>
 						<summary>Xem thêm</summary>
 						<p>
-							Từ năm 2018 về trước, mục này được tính dựa trên “Thu nhập sau khấu trừ lần 1”. Từ năm
+							Từ năm 2018 về trước, mục này được tính dựa trên “thu nhập ròng”. Từ năm
 							2019 trở đi tất cả đều được khấu trừ 38 man yên.
 						</p>
 						<p>
@@ -282,7 +361,7 @@ export default function App() {
 			<div>
 				<div>
 					<label htmlFor="generalFamilyDependantCount">
-						Số người phụ thuôc cùng hộ gia đình (dưới 70 tuổi) (一般の控除対象配偶者)
+						Số người phụ thuôc thông thường (一般の控除対象配偶者)
 					</label>
 				</div>
 				<div>
@@ -290,7 +369,7 @@ export default function App() {
 						name="generalFamilyDependantCount"
 						id="generalFamilyDependantCount"
 						value={generalFamilyDependantCountStr}
-						onChange={evt => setGeneralFamilyDependantCount(evt.target.value)}
+						onChange={evt => setGeneralFamilyDependantCountStr(evt.target.value)}
 					/>
 					<span>
 						<Currency amount={generalFamilyDependantDeduction} />
@@ -299,10 +378,25 @@ export default function App() {
 				<div>
 					<details>
 						<summary>Xem thêm</summary>
-						<p>Đối tượng: vợ, chồng, con cái, bố, mẹ, ... dưới 70 tuổi.</p>
 						<p>
-							Nếu người phụ thuộc có thu nhập cao hơn 103 man yên (tức thu nhập sau khấu trừ lần 1
-							cao hơn 48 man yên) không được tính ở đây.
+							Điều kiện:
+							<ul>
+								<li>
+									Đối tượng: vợ, chồng, con cái, bố, mẹ, ...
+								</li>
+								<li>
+									Sống cùng hộ gia đình.
+								</li>
+								<li>
+									Dưới 70 tuổi.
+								</li>
+								<li>
+									Thu nhập không quá 103 man yên (tức thu nhập ròng không quá 48 man yên).
+									Nếu thu nhập cao hơn, đưa vào mục Khấu trừ khác.
+								</li>
+							</ul>
+						</p>
+						<p>
 						</p>
 						<p>
 							<a
@@ -319,7 +413,7 @@ export default function App() {
 			<div>
 				<div>
 					<label htmlFor="elderFamilyDependantCount">
-						Số người phụ thuôc cùng hộ gia đình (70 tuổi trở lên) (老人控除対象配偶者)
+						Số người phụ thuôc cao tuổi (老人控除対象配偶者)
 					</label>
 				</div>
 				<div>
@@ -327,7 +421,7 @@ export default function App() {
 						name="elderFamilyDependantCount"
 						id="elderFamilyDependantCount"
 						value={elderFamilyDependantCountStr}
-						onChange={evt => setElderFamilyDependantCount(evt.target.value)}
+						onChange={evt => setElderFamilyDependantCountStr(evt.target.value)}
 					/>
 					<span>
 						<Currency amount={elderFamilyDependantDeduction} />
@@ -336,10 +430,23 @@ export default function App() {
 				<div>
 					<details>
 						<summary>Xem thêm</summary>
-						<p>Đối tượng: vợ, chồng, con cái, bố, mẹ ... từ 70 tuổi trở lên</p>
 						<p>
-							Nếu người phụ thuộc có thu nhập cao hơn 103 man yên (tức thu nhập sau khấu trừ lần 1
-							cao hơn 48 man yên) không được tính ở đây.
+							Điều kiện: giống ở trên ngoại trừ điều kiện về tuổi.
+							<ul>
+								<li>
+									Đối tượng: vợ, chồng, con cái, bố, mẹ, ...
+								</li>
+								<li>
+									Sống cùng hộ gia đình.
+								</li>
+								<li>
+									Từ 70 tuổi trở lên.
+								</li>
+								<li>
+									Thu nhập không quá 103 man yên (tức thu nhập ròng không quá 48 man yên).
+									Nếu thu nhập cao hơn, đưa vào mục Khấu trừ khác.
+								</li>
+							</ul>
 						</p>
 						<p>
 							<a
@@ -356,7 +463,7 @@ export default function App() {
 			<div>
 				<div>
 					<label htmlFor="studentDependantCount">
-						Số người phụ thuôc khác hộ gia đình (độ tuổi sinh viên) (特定扶養親族)
+						Số người cần chăm sóc (特定扶養親族)
 					</label>
 				</div>
 				<div>
@@ -364,7 +471,7 @@ export default function App() {
 						name="studentDependantCount"
 						id="studentDependantCount"
 						value={studentDependantCountStr}
-						onChange={evt => setStudentDependantCount(evt.target.value)}
+						onChange={evt => setStudentDependantCountStr(evt.target.value)}
 					/>
 					<span>
 						<Currency amount={studentDependantDeduction} />
@@ -373,10 +480,22 @@ export default function App() {
 				<div>
 					<details>
 						<summary>Xem thêm</summary>
-						<p>Đối tượng: anh, chị, em, bố mẹ không sinh sống cùng.</p>
 						<p>
-							Nếu người phụ thuộc có thu nhập cao hơn 103 man yên (tức thu nhập sau khấu trừ lần 1
-							cao hơn 48 man yên) không được tính ở đây.
+							Điều kiện:
+							<ul>
+								<li>
+									Đối tượng: anh, chị, em, bố mẹ, ...
+								</li>
+								<li>
+									Không cùng hộ gia đình.
+								</li>
+								<li>
+									Độ tuổi sinh viên (tức từ 19 đến 23 tuổi).
+								</li>
+								<li>
+									Thu nhập không quá 103 man yên (tức thu nhập ròng không quá 48 man yên).
+								</li>
+							</ul>
 						</p>
 						<p>
 							<a
@@ -386,7 +505,6 @@ export default function App() {
 								No.1180 扶養控除
 							</a>
 						</p>
-						<p>Độ tuổi sinh viên: từ 19 đến 23 tuổi.</p>
 						<p>
 							<a
 								target="_blank"
@@ -402,7 +520,7 @@ export default function App() {
 			<div>
 				<div>
 					<label htmlFor="generalDependantCount">
-						Số người phụ thuôc khác hộ gia đình (thông thường) (一般の控除対象扶養親族)
+						Số người phụng dưỡng (一般の控除対象扶養親族)
 					</label>
 				</div>
 				<div>
@@ -410,7 +528,7 @@ export default function App() {
 						name="generalDependantCount"
 						id="generalDependantCount"
 						value={generalDependantCountStr}
-						onChange={evt => setGeneralDependantCount(evt.target.value)}
+						onChange={evt => setGeneralDependantCountStr(evt.target.value)}
 					/>
 					<span>
 						<Currency amount={generalDependantDeduction} />
@@ -419,10 +537,22 @@ export default function App() {
 				<div>
 					<details>
 						<summary>Xem thêm</summary>
-						<p>Đối tượng: anh, chị, em, bố mẹ không sinh sống cùng.</p>
 						<p>
-							Nếu người phụ thuộc có thu nhập cao hơn 103 man yên (tức thu nhập sau khấu trừ lần 1
-							cao hơn 48 man yên) không được tính ở đây.
+							Điều kiện: tương tự ở trên ngoại trừ điều kiện về tuổi.
+							<ul>
+								<li>
+									Đối tượng: anh, chị, em, bố mẹ, ...
+								</li>
+								<li>
+									Không cùng hộ gia đình.
+								</li>
+								<li>
+									Ngoài độ tuổi sinh viên (tức ngoài khoảng 19 đến 23 tuổi).
+								</li>
+								<li>
+									Thu nhập không quá 103 man yên (tức thu nhập ròng không quá 48 man yên).
+								</li>
+							</ul>
 						</p>
 						<p>
 							<a
@@ -445,7 +575,7 @@ export default function App() {
 						name="otherIncomeDeduction"
 						id="otherIncomeDeduction"
 						value={otherIncomeDeductionStr}
-						onChange={evt => setOtherIncomeDeduction(evt.target.value)}
+						onChange={evt => setOtherIncomeDeductionStr(evt.target.value)}
 					/>
 					<span>
 						<Currency amount={otherIncomeDeduction} />
@@ -463,7 +593,7 @@ export default function App() {
 								No.1100 所得控除のあらまし
 							</a>
 						</p>
-						<p>Phổ biến nhất là trường hợp vợ hoặc chồng có thu nhập từ 103 man trở lên.</p>
+						<p>Ví dụ: với người phụ thuộc có thu nhập từ 103 man trở lên (tức thu nhập ròng {'>='} 48 man).</p>
 						<p>
 							<img src={familyDependantWithIncomeDeductionTable} />
 						</p>
@@ -473,6 +603,18 @@ export default function App() {
 								href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1195.htm"
 							>
 								No.1195 配偶者特別控除
+							</a>
+						</p>
+						<p>
+							Khai báo thuế giấy xanh (青色申告): được giảm 10 man, 55 man, hoặc 65 man tuỳ theo điều kiện.
+							Áp dụng cho người có thu nhập ngoài lương chính.
+						</p>
+						<p>
+							<a
+								target="_blank"
+								href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1195.htm"
+							>
+								No.2072 青色申告特別控除
 							</a>
 						</p>
 					</details>
@@ -490,8 +632,7 @@ export default function App() {
 					<details>
 						<summary>Xem thêm</summary>
 						<p>
-							Thu nhập chịu thuế = Thu nhập trước thuế - Tổng các khoản khấu trừ trước thuế (lần 1
-							và lần 2).
+							Thu nhập chịu thuế = Doanh thu và lương (<Currency amount={totalEarning}/>) - Chi phí (<Currency amount={totalExpense}/>) - Các khấu trừ trước thuế (<Currency amount={incomeDeduction}/>).
 						</p>
 						<p>Bỏ phần dư và làm tròn đến hàng nghìn.</p>
 						<p>
@@ -534,7 +675,7 @@ export default function App() {
 			</div>
 
 			<div>
-				<div>Khấu trừ thuế trong công thức (基礎所得税控除)</div>
+				<div>Khấu trừ cơ bản sau thuế (基礎所得税控除)</div>
 				<div>
 					<Currency amount={basicTaxDeduction} />
 				</div>
@@ -566,7 +707,7 @@ export default function App() {
 						name="otherTaxDeduction"
 						id="otherTaxDeduction"
 						value={otherTaxDeductionStr}
-						onChange={evt => setOtherTaxDeduction(evt.target.value)}
+						onChange={evt => setOtherTaxDeductionStr(evt.target.value)}
 					/>
 					<Currency amount={otherTaxDeduction} />
 				</div>

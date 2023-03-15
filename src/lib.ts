@@ -8,7 +8,7 @@
 // 8,500,001円以上	1,950,000円（上限）
 import {useCallback, useState} from 'react'
 
-export const getEarningDeduction = (earning: number) =>
+export const getSalaryDeduction = (earning: number) =>
 	earning <= 1_625_000
 		? 550_000
 		: earning <= 1_800_000
