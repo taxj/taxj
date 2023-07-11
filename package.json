@@ -4,7 +4,7 @@
 	"description": "Income tax tools for Vietnamese in Japan",
 	"default": "index.html",
 	"repository": "git@github.com:taxj/taxj.git",
-	"author": "Tran Sang <me@transa.ng>",
+	"author": "Sang Tran <t@sang.jp>",
 	"license": "MIT",
 	"source": "src/index.html",
 	"browserslist": [
