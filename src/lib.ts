@@ -80,8 +80,8 @@ export function safeParseInt(value: string, defaultVal = 0) {
 	return isNaN(parsed) || !isFinite(parsed) ? defaultVal : parsed
 }
 
-export function currencyPreview(value: number) {
-	return `¥${value.toLocaleString('ja-JP', {maximumFractionDigits: 0})}`
+export function Currency({amount}: {amount: number}) {
+	return `¥${amount.toLocaleString('ja-JP', {maximumFractionDigits: 0})}`
 }
 
 // https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1191.htm
@@ -119,4 +119,79 @@ export function useLocalStorage(key: string, initialValue: string) {
 		[key],
 	)
 	return [storedValue, setValue] as const
+}
+
+const insuranceDeductionTable = [
+	[58_000, 63_000],
+	[68_000, 73_000],
+	[78_000, 83_000],
+	[88_000, 93_000],
+	[98_000, 101_000],
+	[104_000, 107_000],
+	[110_000, 114_000],
+	[118_000, 122_000],
+	[126_000, 130_000],
+	[134_000, 138_000],
+	[142_000, 146_000],
+	[150_000, 155_000],
+	[160_000, 165_000],
+	[170_000, 175_000],
+	[180_000, 185_000],
+	[190_000, 195_000],
+	[200_000, 210_000],
+	[220_000, 230_000],
+	[240_000, 250_000],
+	[260_000, 270_000],
+	[280_000, 290_000],
+	[300_000, 310_000],
+	[320_000, 330_000],
+	[340_000, 350_000],
+	[360_000, 370_000],
+	[380_000, 395_000],
+	[410_000, 425_000],
+	[440_000, 455_000],
+	[470_000, 485_000],
+	[500_000, 515_000],
+	[530_000, 545_000],
+	[560_000, 575_000],
+	[590_000, 605_000],
+	[620_000, 635_000],
+	[650_000, 665_000],
+	[680_000, 695_000],
+	[710_000, 730_000],
+	[750_000, 770_000],
+	[790_000, 810_000],
+	[830_000, 855_000],
+	[880_000, 905_000],
+	[930_000, 955_000],
+	[980_000, 1_005_000],
+	[1_030_000, 1_055_000],
+	[1_090_000, 1_115_000],
+	[1_150_000, 1_175_000],
+	[1_210_000, 1_235_000],
+	[1_270_000, 1_295_000],
+	[1_330_000, 1_355_000],
+	[1_390_000, null],
+] as const
+
+// https://www.kyoukaikenpo.or.jp/g7/cat330/
+const insuranceRate = 9.98 / 100
+const insuranceRateForOld = 11.58 / 100
+const welfarePenaltyRate = 18.3 / 100
+
+// before deduction
+export function getHealthInsuranceDeduction(monthlyIncome: number, isMoreThan40YO: boolean) {
+	for (const [avg, max] of insuranceDeductionTable) {
+		if (max === null || monthlyIncome < max)
+			return ((avg * (isMoreThan40YO ? insuranceRateForOld : insuranceRate)) / 2) * 12
+	}
+	return 0
+}
+
+// before deduction
+export function getWelfarePensionInsuranceDeduction(monthlyIncome: number) {
+	for (const [avg, max] of insuranceDeductionTable) {
+		if (max === null || monthlyIncome < max) return ((avg * welfarePenaltyRate) / 2) * 12
+	}
+	return 0
 }

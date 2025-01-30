@@ -65,3 +65,14 @@ body {
 
 .text-xl {
 }
+
+button {
+	background: transparent;
+	border: 1px solid black;
+	cursor: pointer;
+	color: black;
+	&:hover, &:focus {
+		background: black;
+		color: white;
+	}
+}

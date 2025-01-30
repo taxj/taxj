@@ -9,8 +9,10 @@ import {
 	safeParseInt,
 	thousandRound,
 	useLocalStorage,
+	getHealthInsuranceDeduction,
+	getWelfarePensionInsuranceDeduction,
+	Currency,
 } from './lib'
-import Currency from './Currency'
 import earningDeductionTable from './assets/earning-deduction.png'
 import familyDependantWithIncomeDeductionTable from './assets/family-dependant-with-income-deduction.png'
 import taxRateTable from './assets/tax-rate.png'
@@ -42,6 +44,18 @@ export default function App() {
 
 	// income deduction
 	const basicIncomeDeduction = getBasicIncomeDeduction(netIncome)
+
+	const [nationalPensionDeductionStr, setNationalPensionDeductionStr] = useLocalStorage(
+		'nationalPensionDeduction',
+		'203,760',
+	)
+	const nationalPensionDeduction = safeParseInt(nationalPensionDeductionStr)
+
+	const [healthInsuranceDeductionStr, setHealthInsuranceDeductionStr] = useLocalStorage('healthInsuranceDeduction', '0')
+	const healthInsuranceDeduction = safeParseInt(healthInsuranceDeductionStr)
+
+	const [welfarePensionDeductionStr, setWelfarePensionDeductionStr] = useLocalStorage('welfarePensionDeduction', '0')
+	const welfarePensionDeduction = safeParseInt(welfarePensionDeductionStr)
 
 	const [generalFamilyDependantCountStr, setGeneralFamilyDependantCountStr] = useLocalStorage(
 		'generalFamilyDependantCount',
@@ -78,7 +92,10 @@ export default function App() {
 		otherIncomeDeduction
 
 	// tax
-	const taxedIncome = Math.max(netIncome - incomeDeduction, 0)
+	const taxedIncome = Math.max(
+		netIncome - incomeDeduction - healthInsuranceDeduction - welfarePensionDeduction - nationalPensionDeduction,
+		0,
+	)
 	const roundedTaxedIncome = thousandRound(taxedIncome)
 	const taxRate = getTaxRate(roundedTaxedIncome)
 	const {previous: previousTaxRate, current: currentTaxRate, next: nextTaxRate} = getNearbyTaxRates(roundedTaxedIncome)
@@ -346,6 +363,116 @@ export default function App() {
 						</p>
 						<p>
 							<img src={basicIncomDeduction} />
+						</p>
+					</details>
+				</div>
+			</div>
+
+			<div>
+				<div>Khấu trừ bảo hiểm hưu trí quốc dân (国民年金保険控除)</div>
+				<div>
+					<input
+						name="nationalPensionDeduction"
+						id="nationalPensionDeduction"
+						value={nationalPensionDeductionStr}
+						onChange={evt => setNationalPensionDeductionStr(evt.target.value)}
+					/>
+					<span>
+						<Currency amount={nationalPensionDeduction} />
+					</span>
+				</div>
+				<div>
+					<details>
+						<summary>Xem thêm</summary>
+						<p>Nằm trong mục khấu trừ bảo hiểm xã hội (bảo hiểm y tế, hưu trí, etc.)</p>
+						<p>
+							<a
+								target="_blank"
+								href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1130.htm"
+							>
+								No.1130 社会保険料控除
+							</a>
+						</p>
+						<p>
+							Người từ 20 đến 60 tuổi phải đóng 16,980 yên mỗi tháng, và được khấu trừ khoản này vào thu nhập trước
+							thuế. Tham khảo tại:
+						</p>
+						<p>
+							<a
+								target="_blank"
+								href="https://www.nenkin.go.jp/service/kokunen/hokenryo/hokenryo.html#cms01"
+							>
+								国民年金保険料 - 国民年金保険料の金額
+							</a>
+						</p>
+					</details>
+				</div>
+			</div>
+
+			<div>
+				<div>Khấu trừ bảo hiểm y tế (健康保険控除)</div>
+				<div>
+					<input
+						name="healthInsuranceDeduction"
+						id="healthInsuranceDeduction"
+						value={healthInsuranceDeductionStr}
+						onChange={evt => setHealthInsuranceDeductionStr(evt.target.value)}
+					/>
+					<span>
+						<Currency amount={healthInsuranceDeduction} />
+					</span>
+				</div>
+				<div>Khấu trừ bảo hiểm hưu trí phúc lợi (厚生年金控除)</div>
+				<div>
+					<input
+						name="welfarePensionDeduction"
+						id="welfarePensionDeduction"
+						value={welfarePensionDeductionStr}
+						onChange={evt => setPensionDeductionStr(evt.target.value)}
+					/>
+					<span>
+						<Currency amount={welfarePensionDeduction} />
+					</span>
+				</div>
+				<div className="mb-8">
+					<button
+						type="button"
+						onClick={calculateInsuranceDeduction(false)}
+					>
+						Tính tự động (dưới 40 tuổi)
+					</button>
+				</div>
+				<div className="mb-8">
+					<button
+						type="button"
+						onClick={calculateInsuranceDeduction(true)}
+					>
+						Tính tự động (từ 40 đến dưới 65 tuổi)
+					</button>
+				</div>
+				<div>
+					<details>
+						<summary>Xem thêm</summary>
+						<p>
+							Nằm trong mục khấu trừ bảo hiểm xã hội (bảo hiểm y tế, hưu trí, etc.) Công ty đóng 50% và người lao động
+							đóng 50% cho loại bảo hiểm này. Phần người lao động đóng sẽ được khấu trừ vào thu nhập trước thuế.
+						</p>
+						<p>
+							<a
+								target="_blank"
+								href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1130.htm"
+							>
+								No.1130 社会保険料控除
+							</a>
+						</p>
+						<p>Tỉ lệ bảo hiểm trên thu nhập tháng thay đổi hàng năm, và khác nhau theo các tỉnh. Tham khảo tại:</p>
+						<p>
+							<a
+								target="_blank"
+								href="https://www.kyoukaikenpo.or.jp/g7/cat330/"
+							>
+								保険料率
+							</a>
 						</p>
 					</details>
 				</div>
@@ -819,4 +946,15 @@ export default function App() {
 			</div>
 		</>
 	)
+
+	function calculateInsuranceDeduction(isMoreThan40YO: boolean) {
+		return () => {
+			setHealthInsuranceDeductionStr(
+				getHealthInsuranceDeduction(salary / 12, isMoreThan40YO).toLocaleString('ja-JP', {maximumFractionDigits: 0}),
+			)
+			setWelfarePensionDeductionStr(
+				getWelfarePensionInsuranceDeduction(salary / 12).toLocaleString('ja-JP', {maximumFractionDigits: 0}),
+			)
+		}
+	}
 }
