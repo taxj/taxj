@@ -3,13 +3,14 @@ import {
 	getBasicTaxDeduction,
 	getSalaryDeduction,
 	getElderFamilyDependantDeduction,
-	getGeneralFamilyDependantDeduction, getNearbyTaxRates,
+	getGeneralFamilyDependantDeduction,
+	getNearbyTaxRates,
 	getTaxRate,
 	safeParseInt,
 	thousandRound,
 	useLocalStorage,
-} from '~/src/lib'
-import Currency from '~/src/Currency'
+} from './lib'
+import Currency from './Currency'
 import earningDeductionTable from './assets/earning-deduction.png'
 import familyDependantWithIncomeDeductionTable from './assets/family-dependant-with-income-deduction.png'
 import taxRateTable from './assets/tax-rate.png'
@@ -43,43 +44,28 @@ export default function App() {
 
 	const [generalFamilyDependantCountStr, setGeneralFamilyDependantCountStr] = useLocalStorage(
 		'generalFamilyDependantCount',
-		'0',
+		'0'
 	)
 	const generalFamilyDependantCount = safeParseInt(generalFamilyDependantCountStr)
 
-	const generalFamilyDependantDeduction = getGeneralFamilyDependantDeduction(
-		generalFamilyDependantCount,
-		netIncome,
-	)
+	const generalFamilyDependantDeduction = getGeneralFamilyDependantDeduction(generalFamilyDependantCount, netIncome)
 
 	const [elderFamilyDependantCountStr, setElderFamilyDependantCountStr] = useLocalStorage(
 		'elderFamilyDependantCount',
-		'0',
+		'0'
 	)
 	const elderFamilyDependantCount = safeParseInt(elderFamilyDependantCountStr)
-	const elderFamilyDependantDeduction = getElderFamilyDependantDeduction(
-		elderFamilyDependantCount,
-		netIncome,
-	)
+	const elderFamilyDependantDeduction = getElderFamilyDependantDeduction(elderFamilyDependantCount, netIncome)
 
-	const [studentDependantCountStr, setStudentDependantCountStr] = useLocalStorage(
-		'studentDependantCount',
-		'0',
-	)
+	const [studentDependantCountStr, setStudentDependantCountStr] = useLocalStorage('studentDependantCount', '0')
 	const studentDependantCount = safeParseInt(studentDependantCountStr)
 	const studentDependantDeduction = studentDependantCount * 630_000
 
-	const [generalDependantCountStr, setGeneralDependantCountStr] = useLocalStorage(
-		'generalDependantCount',
-		'0',
-	)
+	const [generalDependantCountStr, setGeneralDependantCountStr] = useLocalStorage('generalDependantCount', '0')
 	const generalDependantCount = safeParseInt(generalDependantCountStr)
 	const generalDependantDeduction = generalDependantCount * 380_000
 
-	const [otherIncomeDeductionStr, setOtherIncomeDeductionStr] = useLocalStorage(
-		'otherIncomeDeduction',
-		'0',
-	)
+	const [otherIncomeDeductionStr, setOtherIncomeDeductionStr] = useLocalStorage('otherIncomeDeduction', '0')
 	const otherIncomeDeduction = safeParseInt(otherIncomeDeductionStr)
 
 	const incomeDeduction =
@@ -134,10 +120,7 @@ export default function App() {
 				<div>
 					<details>
 						<summary>Xem thêm</summary>
-						<p>
-							Nếu công ty bạn có nộp trước thuế (源泉徴収) thì mục này nhập vào lương trước khi trừ
-							thuế nộp trước.
-						</p>
+						<p>Nếu công ty bạn có nộp trước thuế (源泉徴収) thì mục này nhập vào lương trước khi trừ thuế nộp trước.</p>
 						<p>
 							<a
 								target="_blank"
@@ -168,12 +151,9 @@ export default function App() {
 				<div>
 					<details>
 						<summary>Xem thêm</summary>
+						<p>Khoản đi làm thêm thường được tính là thu nhập qua doanh nghiệp cá nhân (個人事業).</p>
 						<p>
-							Khoản đi làm thêm thường được tính là thu nhập qua doanh nghiệp cá nhân (個人事業).
-						</p>
-						<p>
-							Ở mục này điền vào lợi nhuận (収入, earning), tức doanh thu (売上, revenue) - chi phí
-							(必要経費, expense).{' '}
+							Ở mục này điền vào lợi nhuận (収入, earning), tức doanh thu (売上, revenue) - chi phí (必要経費, expense).{' '}
 						</p>
 						<p>
 							<a
@@ -198,8 +178,8 @@ export default function App() {
 
 			<h3 className="mt-8">Chi phí (収入から差し引かれる金額)</h3>
 			<i>
-				Bạn có thể khai báo mục chi phí cho các thu nhập ngoài lương tại đây.
-				Với thu nhập từ lương chính sẽ có công thức tính cố định.
+				Bạn có thể khai báo mục chi phí cho các thu nhập ngoài lương tại đây. Với thu nhập từ lương chính sẽ có công
+				thức tính cố định.
 			</i>
 			<div>
 				<details>
@@ -238,15 +218,11 @@ export default function App() {
 				</div>
 			</div>
 
-			<div>
-			</div>
-			<div>
-			</div>
+			<div></div>
+			<div></div>
 			<div>
 				<div>
-					<label htmlFor="businessExpense">
-						Chi phí dành cho thu nhập ngoài lương (必要経費)
-					</label>
+					<label htmlFor="businessExpense">Chi phí dành cho thu nhập ngoài lương (必要経費)</label>
 				</div>
 				<input
 					name="businessExpense"
@@ -254,32 +230,45 @@ export default function App() {
 					value={businessExpenseStr}
 					onChange={evt => setBusinessExpenseStr(evt.target.value)}
 				/>
-				<span><Currency amount={businessExpense} /></span>
+				<span>
+					<Currency amount={businessExpense} />
+				</span>
 				<div>
 					<details>
 						<summary>Xem thêm</summary>
 						<p>
-							Ở mục này bạn khai báo các chi phí cho công việc ngoài lương của bạn.
-							Các chi phí này được chia làm nhiều mục nhỏ (23 mục, gồm điện, nước, chiếu sáng, ăn uống, thiết bị, trả lương, đi lại, vv).
-							Bạn có nghĩa vụ phải lưu trữ các giấy tờ liên quan đến chi phí này để làm bằng chứng và giữ lại trong ít nhất 7 năm sau khi khai báo thuế.
+							Ở mục này bạn khai báo các chi phí cho công việc ngoài lương của bạn. Các chi phí này được chia làm nhiều
+							mục nhỏ (23 mục, gồm điện, nước, chiếu sáng, ăn uống, thiết bị, trả lương, đi lại, vv). Bạn có nghĩa vụ
+							phải lưu trữ các giấy tờ liên quan đến chi phí này để làm bằng chứng và giữ lại trong ít nhất 7 năm sau
+							khi khai báo thuế.
 						</p>
 						<p>
-							Bộ luật về lưu trữ sổ kế toán điện tử sửa đổi (<a
-							target="_blank"
-							href="https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/0021005-038.pdf"
-						>
-							改正電子帳簿保存法
-						</a>, bộ luật này ra đời vào năm 1998 và được sửa đổi nhiều lần) ngày 1 tháng 1 năm 2022 có 2 sửa đổi chính liên quan đến sổ kế toán điện tử.
+							Bộ luật về lưu trữ sổ kế toán điện tử sửa đổi (
+							<a
+								target="_blank"
+								href="https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/0021005-038.pdf"
+							>
+								改正電子帳簿保存法
+							</a>
+							, bộ luật này ra đời vào năm 1998 và được sửa đổi nhiều lần) ngày 1 tháng 1 năm 2022 có 2 sửa đổi chính
+							liên quan đến sổ kế toán điện tử.
 						</p>
 						<p>
 							<ul>
 								<li>
-									国税関係帳簿書類の電子化要件の緩和: đơn giản hoá các thủ tục về số hoá sổ kế toán.
-									Trước kia bạn cần đăng ký với cục thuế về định dạng hoặc phần mềm làm sổ kế toán để có thể số hoá.
-									Bộ luật sửa đổi có đưa ra các điều kiện sẵn.
-									Nếu phần mềm kế toán của bạn bảo đảm các tiêu chi này thì bạn không cần đăng ký với cục thuế nữa.
+									国税関係帳簿書類の電子化要件の緩和: đơn giản hoá các thủ tục về số hoá sổ kế toán. Trước kia bạn cần
+									đăng ký với cục thuế về định dạng hoặc phần mềm làm sổ kế toán để có thể số hoá. Bộ luật sửa đổi có
+									đưa ra các điều kiện sẵn. Nếu phần mềm kế toán của bạn bảo đảm các tiêu chi này thì bạn không cần đăng
+									ký với cục thuế nữa.
 								</li>
-								<li>電子取引の電子データ保存義務化: <b>các giấy tờ liên quan tới chi phí doanh nghiệp, tức sổ kế toán và giấy tờ liên quan, từ ngày 1 tháng 1 năm 2024 phải được lưu trữ dưới dạng số</b>.</li>
+								<li>
+									電子取引の電子データ保存義務化:{' '}
+									<b>
+										các giấy tờ liên quan tới chi phí doanh nghiệp, tức sổ kế toán và giấy tờ liên quan, từ ngày 1 tháng
+										1 năm 2024 phải được lưu trữ dưới dạng số
+									</b>
+									.
+								</li>
 							</ul>
 						</p>
 						<p>
@@ -343,8 +332,8 @@ export default function App() {
 					<details>
 						<summary>Xem thêm</summary>
 						<p>
-							Từ năm 2018 về trước, mục này được tính dựa trên “thu nhập ròng”. Từ năm
-							2019 trở đi tất cả đều được khấu trừ 38 man yên.
+							Từ năm 2018 về trước, mục này được tính dựa trên “thu nhập ròng”. Từ năm 2019 trở đi tất cả đều được khấu
+							trừ 38 man yên.
 						</p>
 						<p>
 							<a
@@ -360,9 +349,7 @@ export default function App() {
 
 			<div>
 				<div>
-					<label htmlFor="generalFamilyDependantCount">
-						Số người phụ thuôc thông thường (一般の控除対象配偶者)
-					</label>
+					<label htmlFor="generalFamilyDependantCount">Số người phụ thuôc thông thường (一般の控除対象配偶者)</label>
 				</div>
 				<div>
 					<input
@@ -381,23 +368,16 @@ export default function App() {
 						<p>
 							Điều kiện:
 							<ul>
+								<li>Đối tượng: vợ, chồng, con cái, bố, mẹ, ...</li>
+								<li>Sống cùng hộ gia đình.</li>
+								<li>Dưới 70 tuổi.</li>
 								<li>
-									Đối tượng: vợ, chồng, con cái, bố, mẹ, ...
-								</li>
-								<li>
-									Sống cùng hộ gia đình.
-								</li>
-								<li>
-									Dưới 70 tuổi.
-								</li>
-								<li>
-									Thu nhập không quá 103 man yên (tức thu nhập ròng không quá 48 man yên).
-									Nếu thu nhập cao hơn, đưa vào mục Khấu trừ khác.
+									Thu nhập không quá 103 man yên (tức thu nhập ròng không quá 48 man yên). Nếu thu nhập cao hơn, đưa vào
+									mục Khấu trừ khác.
 								</li>
 							</ul>
 						</p>
-						<p>
-						</p>
+						<p></p>
 						<p>
 							<a
 								target="_blank"
@@ -412,9 +392,7 @@ export default function App() {
 
 			<div>
 				<div>
-					<label htmlFor="elderFamilyDependantCount">
-						Số người phụ thuôc cao tuổi (老人控除対象配偶者)
-					</label>
+					<label htmlFor="elderFamilyDependantCount">Số người phụ thuôc cao tuổi (老人控除対象配偶者)</label>
 				</div>
 				<div>
 					<input
@@ -433,18 +411,12 @@ export default function App() {
 						<p>
 							Điều kiện: giống ở trên ngoại trừ điều kiện về tuổi.
 							<ul>
+								<li>Đối tượng: vợ, chồng, con cái, bố, mẹ, ...</li>
+								<li>Sống cùng hộ gia đình.</li>
+								<li>Từ 70 tuổi trở lên.</li>
 								<li>
-									Đối tượng: vợ, chồng, con cái, bố, mẹ, ...
-								</li>
-								<li>
-									Sống cùng hộ gia đình.
-								</li>
-								<li>
-									Từ 70 tuổi trở lên.
-								</li>
-								<li>
-									Thu nhập không quá 103 man yên (tức thu nhập ròng không quá 48 man yên).
-									Nếu thu nhập cao hơn, đưa vào mục Khấu trừ khác.
+									Thu nhập không quá 103 man yên (tức thu nhập ròng không quá 48 man yên). Nếu thu nhập cao hơn, đưa vào
+									mục Khấu trừ khác.
 								</li>
 							</ul>
 						</p>
@@ -462,9 +434,7 @@ export default function App() {
 
 			<div>
 				<div>
-					<label htmlFor="studentDependantCount">
-						Số người cần chăm sóc (特定扶養親族)
-					</label>
+					<label htmlFor="studentDependantCount">Số người cần chăm sóc (特定扶養親族)</label>
 				</div>
 				<div>
 					<input
@@ -483,18 +453,10 @@ export default function App() {
 						<p>
 							Điều kiện:
 							<ul>
-								<li>
-									Đối tượng: anh, chị, em, bố mẹ, ...
-								</li>
-								<li>
-									Không cùng hộ gia đình.
-								</li>
-								<li>
-									Độ tuổi sinh viên (tức từ 19 đến 23 tuổi).
-								</li>
-								<li>
-									Thu nhập không quá 103 man yên (tức thu nhập ròng không quá 48 man yên).
-								</li>
+								<li>Đối tượng: anh, chị, em, bố mẹ, ...</li>
+								<li>Không cùng hộ gia đình.</li>
+								<li>Độ tuổi sinh viên (tức từ 19 đến 23 tuổi).</li>
+								<li>Thu nhập không quá 103 man yên (tức thu nhập ròng không quá 48 man yên).</li>
 							</ul>
 						</p>
 						<p>
@@ -519,9 +481,7 @@ export default function App() {
 
 			<div>
 				<div>
-					<label htmlFor="generalDependantCount">
-						Số người phụng dưỡng (一般の控除対象扶養親族)
-					</label>
+					<label htmlFor="generalDependantCount">Số người phụng dưỡng (一般の控除対象扶養親族)</label>
 				</div>
 				<div>
 					<input
@@ -540,18 +500,10 @@ export default function App() {
 						<p>
 							Điều kiện: tương tự ở trên ngoại trừ điều kiện về tuổi.
 							<ul>
-								<li>
-									Đối tượng: anh, chị, em, bố mẹ, ...
-								</li>
-								<li>
-									Không cùng hộ gia đình.
-								</li>
-								<li>
-									Ngoài độ tuổi sinh viên (tức ngoài khoảng 19 đến 23 tuổi).
-								</li>
-								<li>
-									Thu nhập không quá 103 man yên (tức thu nhập ròng không quá 48 man yên).
-								</li>
+								<li>Đối tượng: anh, chị, em, bố mẹ, ...</li>
+								<li>Không cùng hộ gia đình.</li>
+								<li>Ngoài độ tuổi sinh viên (tức ngoài khoảng 19 đến 23 tuổi).</li>
+								<li>Thu nhập không quá 103 man yên (tức thu nhập ròng không quá 48 man yên).</li>
 							</ul>
 						</p>
 						<p>
@@ -606,8 +558,8 @@ export default function App() {
 							</a>
 						</p>
 						<p>
-							Khai báo thuế giấy xanh (青色申告): được giảm 10 man, 55 man, hoặc 65 man tuỳ theo điều kiện.
-							Áp dụng cho người có thu nhập ngoài lương chính.
+							Khai báo thuế giấy xanh (青色申告): được giảm 10 man, 55 man, hoặc 65 man tuỳ theo điều kiện. Áp dụng cho
+							người có thu nhập ngoài lương chính.
 						</p>
 						<p>
 							<a
@@ -632,7 +584,9 @@ export default function App() {
 					<details>
 						<summary>Xem thêm</summary>
 						<p>
-							Thu nhập chịu thuế = Doanh thu và lương (<Currency amount={totalEarning}/>) - Chi phí (<Currency amount={totalExpense}/>) - Các khấu trừ trước thuế (<Currency amount={incomeDeduction}/>).
+							Thu nhập chịu thuế = Doanh thu và lương (<Currency amount={totalEarning} />) - Chi phí (
+							<Currency amount={totalExpense} />) - Các khấu trừ trước thuế (<Currency amount={incomeDeduction} />
+							).
 						</p>
 						<p>Bỏ phần dư và làm tròn đến hàng nghìn.</p>
 						<p>
@@ -649,13 +603,32 @@ export default function App() {
 
 			<h3 className="mt-8">Thuế thu nhập</h3>
 			<div>
-				<div>Thuế suất (税率): <h4 className="inline"><b>{taxRate * 100}%</b></h4></div>
-				{previousTaxRate && <div className="italic">
-					Bạn cần phải giảm hoặc khấu trừ thêm ít nhất <b className="text-green-500"><Currency amount={roundedTaxedIncome - previousTaxRate[0]}/></b> yên để giảm thuế suất xuống từ {taxRate * 100}% xuống <b className="text-green-500">{previousTaxRate[1] * 100}%</b>.
-				</div>}
-				{nextTaxRate && <div className="italic">
-					Nếu bạn tăng thu nhập thêm <b className="text-red-500"><Currency amount={currentTaxRate[0] - roundedTaxedIncome + 1}/></b> yên thì thuế suất sẽ tăng lên từ {taxRate * 100}% lên <b className="text-red-500">{nextTaxRate[1] * 100}%</b>.
-				</div>}
+				<div>
+					Thuế suất (税率):{' '}
+					<h4 className="inline">
+						<b>{taxRate * 100}%</b>
+					</h4>
+				</div>
+				{previousTaxRate && (
+					<div className="italic">
+						Bạn cần phải giảm hoặc khấu trừ thêm ít nhất{' '}
+						<b className="text-green-500">
+							<Currency amount={roundedTaxedIncome - previousTaxRate[0]} />
+						</b>{' '}
+						yên để giảm thuế suất xuống từ {taxRate * 100}% xuống{' '}
+						<b className="text-green-500">{previousTaxRate[1] * 100}%</b>.
+					</div>
+				)}
+				{nextTaxRate && (
+					<div className="italic">
+						Nếu bạn tăng thu nhập thêm{' '}
+						<b className="text-red-500">
+							<Currency amount={currentTaxRate[0] - roundedTaxedIncome + 1} />
+						</b>{' '}
+						yên thì thuế suất sẽ tăng lên từ {taxRate * 100}% lên{' '}
+						<b className="text-red-500">{nextTaxRate[1] * 100}%</b>.
+					</div>
+				)}
 				<div>
 					<details>
 						<summary>Xem thêm</summary>
@@ -815,15 +788,18 @@ export default function App() {
 						<summary>Xem thêm</summary>
 						<p>
 							Đây là khoản thuế phải đóng cho cục thuế. Dựa vào số tiền mà công ty đã nộp trước
-							(源泉徴収税額や予定納税額) mà bạn sẽ cần phải đóng bổ sung (納める) nếu thiếu, hoặc
-							được cục thuế hoàn tiền (還付) nếu thừa, dựa theo số tiền chênh lệch.
+							(源泉徴収税額や予定納税額) mà bạn sẽ cần phải đóng bổ sung (納める) nếu thiếu, hoặc được cục thuế hoàn
+							tiền (還付) nếu thừa, dựa theo số tiền chênh lệch.
 						</p>
 						<p>
-							Khoản thuế này chưa bao gồm thuế thị dân (住民税). Mỗi khu vực sống có công thức tính
-							thuế riêng. Ví dụ ở Tokyo, bạn tham khảo đường dẫn sau:
+							Khoản thuế này chưa bao gồm thuế thị dân (住民税). Mỗi khu vực sống có công thức tính thuế riêng. Ví dụ ở
+							Tokyo, bạn tham khảo đường dẫn sau:
 						</p>
 						<p>
-							<a target="_blank" href="https://www.tax.metro.tokyo.lg.jp/kazei/kojin_ju.html">
+							<a
+								target="_blank"
+								href="https://www.tax.metro.tokyo.lg.jp/kazei/kojin_ju.html"
+							>
 								個人住民税
 							</a>
 						</p>
@@ -831,8 +807,7 @@ export default function App() {
 							<img src={tokyoTaxTable} />
 						</p>
 						<p>
-							均等割は、定額で課税されます。 個人都民税の税額は1,500
-							円、個人区市町村民税の税額は3,500 円です。
+							均等割は、定額で課税されます。 個人都民税の税額は1,500 円、個人区市町村民税の税額は3,500 円です。
 							※平成26年度から令和5年度までの間、地方自治体の防災対策に充てるため、個人住民税の均等割額は都民税・区市町村民税それぞれ500円が加算されています。
 						</p>
 					</details>

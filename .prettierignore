@@ -1,8 +1,0 @@
-node_modules
-.idea
-yarn-error.log
-dist
-.parcel-cache
-
-.pnp.*
-.yarn/*

@@ -2,47 +2,44 @@
 	"name": "taxj",
 	"version": "0.0.1",
 	"description": "Income tax tools for Vietnamese in Japan",
-	"default": "index.html",
 	"repository": "git@github.com:taxj/taxj.git",
 	"author": "Sang Tran <t@sang.jp>",
 	"license": "MIT",
-	"source": "src/index.html",
 	"browserslist": [
 		"> 0.5%",
 		"last 2 versions",
 		"not dead"
 	],
 	"scripts": {
-		"start": "parcel",
-		"build": "parcel build",
-		"clean": "rm -rf ./dist ./.parcel-cache",
-		"lint": "prettier --check .",
-		"lint:fix": "prettier --write ."
+		"dev": "vite",
+		"build": "tsc -b ; vite build --mode dev && rm -rf dist/local",
+		"lint": "prettier --write src",
+		"preview": "vite preview"
 	},
 	"devDependencies": {
-		"@parcel/transformer-sass": "2.8.1",
-		"@types/react": "^18.0.26",
-		"@types/react-dom": "^18.0.9",
-		"parcel": "^2.8.1",
-		"prettier": "^2.8.1",
-		"process": "^0.11.10",
-		"typescript": "^4.9.4"
+		"@vitejs/plugin-react": "^4.3.4",
+		"prettier": "^3.4.2",
+		"typescript": "^4.9.5",
+		"vite": "^6.0.11"
 	},
 	"prettier": {
-		"printWidth": 100,
-		"useTabs": true,
+		"printWidth": 120,
 		"tabWidth": 2,
+		"useTabs": true,
 		"semi": false,
 		"singleQuote": true,
-		"trailingComma": "all",
+		"quoteProps": "as-needed",
+		"jsxSingleQuote": false,
 		"bracketSpacing": false,
-		"arrowParens": "avoid",
 		"bracketSameLine": false,
-		"jsxSingleQuote": false
+		"arrowParens": "avoid",
+		"htmlWhitespaceSensitivity": "ignore",
+		"singleAttributePerLine": true
 	},
-	"packageManager": "yarn@3.3.0",
 	"dependencies": {
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0"
+		"@types/react": "^19.0.8",
+		"@types/react-dom": "^19.0.3",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0"
 	}
 }

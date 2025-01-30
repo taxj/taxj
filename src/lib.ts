@@ -70,8 +70,7 @@ export const safeParseInt = (value: string, defaultVal = 0) => {
 	return isNaN(parsed) || !isFinite(parsed) ? defaultVal : parsed
 }
 
-export const currencyPreview = (value: number) =>
-	`¥${value.toLocaleString('ja-JP', {maximumFractionDigits: 0})}`
+export const currencyPreview = (value: number) => `¥${value.toLocaleString('ja-JP', {maximumFractionDigits: 0})}`
 
 // https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1191.htm
 export const getGeneralFamilyDependantDeduction = (count: number, income: number) =>
@@ -101,7 +100,7 @@ export const useLocalStorage = (key: string, initialValue: string) => {
 				console.log(error)
 			}
 		},
-		[key],
+		[key]
 	)
 	return [storedValue, setValue] as const
 }

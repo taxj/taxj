@@ -1,12 +1,11 @@
+import './styles.css'
+
 import App from './App'
 import {createRoot} from 'react-dom/client'
-import React, {StrictMode} from 'react'
+import {StrictMode} from 'react'
 
-const main = async () => {
-	createRoot(document.getElementById('root')).render(
-		<StrictMode>
-			<App />
-		</StrictMode>,
-	)
-}
-main()
+createRoot(document.getElementById('root')).render(
+	<StrictMode>
+		<App />
+	</StrictMode>
+)

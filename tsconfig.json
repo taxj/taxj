@@ -1,16 +1,4 @@
 {
-	"compilerOptions": {
-		"baseUrl": ".",
-		"target": "ESNext",
-		"module": "ESNext",
-		"lib": ["esnext", "dom"],
-		"jsx": "react-jsx",
-		"resolveJsonModule": true,
-		"esModuleInterop": true,
-		"downlevelIteration": true,
-		"moduleResolution": "Node",
-		"paths": {
-			"~/*": ["*"]
-		}
-	}
+	"files": [],
+	"references": [{"path": "./tsconfig.app.json"}, {"path": "./tsconfig.node.json"}]
 }
