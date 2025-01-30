@@ -16,6 +16,7 @@ import familyDependantWithIncomeDeductionTable from './assets/family-dependant-w
 import taxRateTable from './assets/tax-rate.png'
 import disasterTaxTable from './assets/disaster-tax.png'
 import incomeTable from './assets/income.png'
+import basicIncomDeduction from './assets/basic-income-deduction.png'
 import incomeTable2 from './assets/income2.png'
 import otherTaxDeductionTable from './assets/other-tax-deduction.png'
 import tokyoTaxTable from './assets/tokyo-tax.png'
@@ -44,7 +45,7 @@ export default function App() {
 
 	const [generalFamilyDependantCountStr, setGeneralFamilyDependantCountStr] = useLocalStorage(
 		'generalFamilyDependantCount',
-		'0'
+		'0',
 	)
 	const generalFamilyDependantCount = safeParseInt(generalFamilyDependantCountStr)
 
@@ -52,7 +53,7 @@ export default function App() {
 
 	const [elderFamilyDependantCountStr, setElderFamilyDependantCountStr] = useLocalStorage(
 		'elderFamilyDependantCount',
-		'0'
+		'0',
 	)
 	const elderFamilyDependantCount = safeParseInt(elderFamilyDependantCountStr)
 	const elderFamilyDependantDeduction = getElderFamilyDependantDeduction(elderFamilyDependantCount, netIncome)
@@ -332,7 +333,7 @@ export default function App() {
 					<details>
 						<summary>Xem thêm</summary>
 						<p>
-							Từ năm 2018 về trước, mục này được tính dựa trên “thu nhập ròng”. Từ năm 2019 trở đi tất cả đều được khấu
+							Từ năm 2019 trở đi, mục này được tính dựa trên “thu nhập ròng”. Từ năm 2018 về trước, tất cả đều được khấu
 							trừ 38 man yên.
 						</p>
 						<p>
@@ -342,6 +343,9 @@ export default function App() {
 							>
 								No.1199 基礎控除
 							</a>
+						</p>
+						<p>
+							<img src={basicIncomDeduction} />
 						</p>
 					</details>
 				</div>

@@ -8,21 +8,30 @@
 // 8,500,001円以上	1,950,000円（上限）
 import {useCallback, useState} from 'react'
 
-export const getSalaryDeduction = (earning: number) =>
-	earning <= 1_625_000
+export function getSalaryDeduction(earning: number) {
+	return earning <= 1_625_000
 		? 550_000
 		: earning <= 1_800_000
-		? (earning * 40) / 100 - 100_000
-		: earning <= 3_600_000
-		? (earning * 30) / 100 + 80_000
-		: earning <= 6_600_000
-		? (earning * 20) / 100 + 440_000
-		: earning <= 8_500_000
-		? (earning * 10) / 100 + 1_100_000
-		: 1_950_000
+			? (earning * 40) / 100 - 100_000
+			: earning <= 3_600_000
+				? (earning * 30) / 100 + 80_000
+				: earning <= 6_600_000
+					? (earning * 20) / 100 + 440_000
+					: earning <= 8_500_000
+						? (earning * 10) / 100 + 1_100_000
+						: 1_950_000
+}
 
 // https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm
-export const getBasicIncomeDeduction = deductedEarning => 380_000
+export function getBasicIncomeDeduction(deductedEarning: number) {
+	return deductedEarning <= 24_000_000
+		? 480_000
+		: deductedEarning <= 24_500_000
+			? 320_000
+			: deductedEarning <= 25_000_000
+				? 160_000
+				: 0
+}
 
 const taxRateLevel = [
 	[1_949_000, 5 / 100],
@@ -35,12 +44,12 @@ const taxRateLevel = [
 ] as const
 
 // https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm
-export const getTaxRate = (deductedIncome: number) => {
+export function getTaxRate(deductedIncome: number) {
 	const [limit, rate] = taxRateLevel.find(([limit]) => deductedIncome <= limit)
 	return rate
 }
 
-export const getNearbyTaxRates = (deductedIncome: number) => {
+export function getNearbyTaxRates(deductedIncome: number) {
 	const idx = taxRateLevel.findIndex(([limit]) => deductedIncome <= limit)
 	return {
 		previous: taxRateLevel[idx - 1],
@@ -50,38 +59,45 @@ export const getNearbyTaxRates = (deductedIncome: number) => {
 }
 
 // https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm
-export const getBasicTaxDeduction = (deductedIncome: number) =>
-	deductedIncome <= 1_949_000
+export function getBasicTaxDeduction(deductedIncome: number) {
+	return deductedIncome <= 1_949_000
 		? 0
 		: deductedIncome <= 3_299_000
-		? 97_500
-		: deductedIncome <= 6_949_000
-		? 427_500
-		: deductedIncome <= 8_999_000
-		? 636_000
-		: deductedIncome <= 17_999_000
-		? 1_536_000
-		: deductedIncome <= 39_999_000
-		? 2_796_000
-		: 4_796_000
+			? 97_500
+			: deductedIncome <= 6_949_000
+				? 427_500
+				: deductedIncome <= 8_999_000
+					? 636_000
+					: deductedIncome <= 17_999_000
+						? 1_536_000
+						: deductedIncome <= 39_999_000
+							? 2_796_000
+							: 4_796_000
+}
 
-export const safeParseInt = (value: string, defaultVal = 0) => {
+export function safeParseInt(value: string, defaultVal = 0) {
 	const parsed = parseInt((value ?? '').replace(/[_,]/g, ''))
 	return isNaN(parsed) || !isFinite(parsed) ? defaultVal : parsed
 }
 
-export const currencyPreview = (value: number) => `¥${value.toLocaleString('ja-JP', {maximumFractionDigits: 0})}`
+export function currencyPreview(value: number) {
+	return `¥${value.toLocaleString('ja-JP', {maximumFractionDigits: 0})}`
+}
 
 // https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1191.htm
-export const getGeneralFamilyDependantDeduction = (count: number, income: number) =>
-	count * (income <= 9_000_000 ? 380_000 : income <= 9_500_000 ? 260_000 : 130_000)
+export function getGeneralFamilyDependantDeduction(count: number, income: number) {
+	return count * (income <= 9_000_000 ? 380_000 : income <= 9_500_000 ? 260_000 : 130_000)
+}
 
-export const getElderFamilyDependantDeduction = (count: number, income: number) =>
-	count * (income <= 9_000_000 ? 480_000 : income <= 9_500_000 ? 320_000 : 160_000)
+export function getElderFamilyDependantDeduction(count: number, income: number) {
+	return count * (income <= 9_000_000 ? 480_000 : income <= 9_500_000 ? 320_000 : 160_000)
+}
 
-export const thousandRound = (value: number) => Math.trunc(value / 1000) * 1000
+export function thousandRound(value: number) {
+	return Math.trunc(value / 1000) * 1000
+}
 
-export const useLocalStorage = (key: string, initialValue: string) => {
+export function useLocalStorage(key: string, initialValue: string) {
 	const [storedValue, setStoredValue] = useState(() => {
 		try {
 			return window.localStorage.getItem(key) ?? initialValue
@@ -100,7 +116,7 @@ export const useLocalStorage = (key: string, initialValue: string) => {
 				console.log(error)
 			}
 		},
-		[key]
+		[key],
 	)
 	return [storedValue, setValue] as const
 }
