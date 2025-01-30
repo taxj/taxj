@@ -12,7 +12,7 @@
 	],
 	"scripts": {
 		"dev": "vite",
-		"build": "tsc -b ; vite build --mode dev && rm -rf dist/local",
+		"build": "tsc -b ; vite build",
 		"lint": "prettier --write src",
 		"preview": "vite preview"
 	},
